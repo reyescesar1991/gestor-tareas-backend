@@ -5,7 +5,7 @@ import { AssignmentValidator } from "../../validators";
 import { IAssignmentRepository } from "../../../services/assignment/interfaces/IAssignment.repository";
 import { AssignmentRepositoryImpl } from "../../../services/assignment/repositories/assignment.repository";
 
-export const TaskDependencies = async () => {
+export const AssignmentDependencies = async () => {
 
     container.register("TransactionManager", TransactionManager);
     container.register("AssignmentModel", {useValue : AssignmentModel});

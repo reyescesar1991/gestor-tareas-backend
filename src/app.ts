@@ -2,6 +2,11 @@ import express from 'express';
 import { errorHandler } from './api/middleware/error.middleware';
 import cors from 'cors';
 import helmet from 'helmet';
+import userRoutes from './api/routes/user/user.routes';
+import taskRoutes from './api/routes/task/task.routes';
+import assignmentRoutes from './api/routes/assignment/assignment.routes';
+import authRoutes from './api/routes/auth/auth.routes';
+import { validateLoginData } from './api/middleware/auth/auth.middleware';
 
 const app = express();
 
@@ -38,6 +43,12 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({extended : true}));
 
+
+// Rutas de la API
+app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/task', taskRoutes);
+app.use('/api/v1/assignment', assignmentRoutes),
+app.use('/api/v1/auth', authRoutes);
 
 
 app.use(errorHandler);

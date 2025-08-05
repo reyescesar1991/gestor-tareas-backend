@@ -14,7 +14,11 @@ export class AssignmentRepositoryImpl implements IAssignmentRepository{
     
     async findAssignmentByUserId(idUser: ObjectIdParam, session?: ClientSession): Promise<AssignmentDocument | null> {
         
-        return await this.AssignmentModel.findOne({idUser}, {session});
+        // Corregido: El campo no es 'idUser', y la sesión va en las opciones.
+        // Buscamos si el usuario ha asignado o le han asignado una tarea.
+        return await this.AssignmentModel.findOne({ 
+            $or: [{ assignedBy: idUser }, { assignedTo: idUser }] 
+        }, null, {session});
     }
 
     async createAssignment(dataCreateAssignment: AssignmentDto, session?: ClientSession): Promise<AssignmentDocument | null> {
@@ -24,6 +28,6 @@ export class AssignmentRepositoryImpl implements IAssignmentRepository{
     }
     async findAssignmentById(idAssignment: ObjectIdParam, session?: ClientSession): Promise<AssignmentDocument | null> {
         
-        return await this.AssignmentModel.findById(idAssignment, {session});
+        return await this.AssignmentModel.findById(idAssignment, null, {session});
     }
 }

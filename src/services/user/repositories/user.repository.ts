@@ -1,4 +1,4 @@
-import { ClientSession, Model } from "mongoose";
+import { ClientSession, FilterQuery, Model } from "mongoose";
 import { UserDocument } from "../../../core/models/user.model";
 import { UserDto } from "../../../core/zodValidators";
 import { ObjectIdParam } from "../../../core/zodValidators/idMongo.validator";
@@ -12,6 +12,23 @@ export class UserRepositoryImpl implements IUserRepository{
         @inject("UserModel") private readonly userModel: Model<UserDocument>,
     ){}
 
+    async findUserByUniqueFields(phone: string, email: string, session?: ClientSession): Promise<UserDocument | null> {
+        
+        const query : FilterQuery<UserDocument> = {
+            $or : [
+                {phone},
+                {email}
+            ]
+        }
+
+        return await this.userModel.findOne(query, null, {session});                                      
+    }
+
+    async findUserByUsername(username: string, session?: ClientSession): Promise<UserDocument | null> {
+        
+        return await this.userModel.findOne({username}, null, {session});
+    }
+
     async createUser(dataCreateUser: UserDto, session?: ClientSession): Promise<UserDocument | null> {
         
         const [newUser] = await this.userModel.create([dataCreateUser], {session});
@@ -20,7 +37,7 @@ export class UserRepositoryImpl implements IUserRepository{
 
     async findUser(idUser: ObjectIdParam, session?: ClientSession): Promise<UserDocument | null> {
         
-        return await this.userModel.findById(idUser, {session});
+        return await this.userModel.findById(idUser, null, {session});
     }
     
 }
