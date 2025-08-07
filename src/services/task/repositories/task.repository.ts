@@ -15,12 +15,17 @@ export class TaskRepositoryImpl implements ITaskRepository{
 
     async updateTask(idTask : ObjectIdParam, dataUpdateTask: TaskUpdateDto, session?: ClientSession): Promise<TaskDocument | null> {
         
-        return await this.TaskModel.findByIdAndUpdate(idTask, dataUpdateTask, {new : true, runValidators : true, session});
+        const newTask = await this.TaskModel.findByIdAndUpdate(idTask, dataUpdateTask, {new : true, runValidators : true, session});
+
+        return newTask;
     }
 
     async findTaskById(idTask: ObjectIdParam, session?: ClientSession): Promise<TaskDocument | null> {
         
-        return await this.TaskModel.findById(idTask, null, {session});
+        const task = await this.TaskModel.findById(idTask, null, {session});
+ 
+
+        return task;
     }
 
     async createTask(dataCreateTask: TaskDto, session?: ClientSession): Promise<TaskDocument | null> {
@@ -31,7 +36,7 @@ export class TaskRepositoryImpl implements ITaskRepository{
 
     async findTasks(): Promise<TaskDocument[] | null> {
         
-        return await this.TaskModel.find();
+        return await this.TaskModel.find().select("_id title description dueDate priority status");
     }
 
 }

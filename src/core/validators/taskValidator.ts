@@ -10,7 +10,7 @@ export class TaskValidator{
         @inject("TaskModel") private readonly TaskModel: Model<TaskDocument>,
     ){}
 
-    static validateTaskExists(task : TaskDocument) : void{
+    validateTaskExists(task : TaskDocument) : void{
 
         if(!task) throw new TaskNotFoundError("La tarea no existe");
 

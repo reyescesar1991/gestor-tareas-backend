@@ -1,4 +1,4 @@
-import { delay, inject } from "tsyringe";
+import { delay, inject, injectable } from "tsyringe";
 import { Transactional } from "../../core/utils/transactional-wrapper";
 import { ClientSession } from "mongoose";
 import { TransactionManager } from "../../core/database/transactionManager";
@@ -12,13 +12,13 @@ import { UserService } from "../user/User.service";
 import { TaskService } from "../task/Task.service";
 import { logger } from "../../core/logger/logger";
 
-
+@injectable()
 export class AssignmentService{
 
     constructor(
         @inject("AssignmentRepository") private readonly assignmentRepository: IAssignmentRepository,
         @inject("TransactionManager") private readonly transactionManager: TransactionManager,
-        @inject("AssignmentValidator") private readonly assignmentValidator: AssignmentValidator,
+        @inject(AssignmentValidator) private readonly assignmentValidator: AssignmentValidator,
         @inject(delay(() => TaskService)) private readonly taskService: TaskService,
         @inject(delay(() => UserService)) private readonly userService: UserService,
     ){}
@@ -69,7 +69,7 @@ export class AssignmentService{
 
             logger.debug("----Se ha encontrado la asignacion----", assignment);
 
-            AssignmentValidator.validateAssignmentExists(assignment);
+            this.assignmentValidator.validateAssignmentExists(assignment);
 
             logger.info("----Operacion existosa: Se ha encontrado la asignacion con exito----");
 
@@ -94,7 +94,7 @@ export class AssignmentService{
 
             logger.debug("----Se ha encontrado la asignacion----", assignment)
 
-            AssignmentValidator.validateAssignmentExists(assignment);
+            this.assignmentValidator.validateAssignmentExists(assignment);
 
             logger.info("----Operacion existosa: Se ha encontrado la asignacion con exito----")
 

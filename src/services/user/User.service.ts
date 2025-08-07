@@ -16,7 +16,7 @@ export class UserService {
     constructor(
         @inject("IUserRepository") private readonly userRepository: IUserRepository,
         @inject("TransactionManager") private readonly transactionManager: TransactionManager,
-        @inject("UserValidator") private readonly userValidator: UserValidator,
+        @inject(UserValidator) private readonly userValidator: UserValidator,
     ) { }
 
     @Transactional()
@@ -57,7 +57,7 @@ export class UserService {
 
             logger.info("----Se ha encontrado el usuario----");
 
-            UserValidator.validateUserExists(user);
+            this.userValidator.validateUserExists(user);
 
             logger.info("----Operacion existosa: Se ha encontrado el usuario con exito----")
 
@@ -82,7 +82,7 @@ export class UserService {
 
             logger.info("----Se ha encontrado el usuario----");
 
-            UserValidator.validateUserExists(user);
+            this.userValidator.validateUserExists(user);
 
             logger.info("----Operacion existosa: Se ha encontrado el usuario con exito----")
 
@@ -91,6 +91,29 @@ export class UserService {
         } catch (error) {
             
             logger.error("Ha ocurrido un error en el service findUser: UserService: ", error);
+            throw handleError(error);
+        }
+    }
+
+    @Transactional()
+    async getUsers(session?: ClientSession): Promise<UserDocument[] | null>{
+
+        try {
+
+            logger.info("----Iniciando la busqueda de los usuarios en el service: UserService----");
+
+            const users = await this.userRepository.getUsers(session);
+
+            logger.info("----Se ha encontrado el usuario----");
+
+            this.userValidator.validateUsersExists(users);
+
+            logger.info("----Operacion existosa: Se ha encontrado los usuarios con exito----")
+
+            return users;
+            
+        } catch (error) {
+            
             throw handleError(error);
         }
     }

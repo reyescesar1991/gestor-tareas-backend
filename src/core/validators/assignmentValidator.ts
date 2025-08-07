@@ -10,7 +10,7 @@ export class AssignmentValidator{
         @inject("AssignmentModel") private readonly AssignmentModel: Model<AssignmentDocument>,
     ){}
 
-    static validateAssignmentExists(assignment : AssignmentDocument) : void{
+    validateAssignmentExists(assignment : AssignmentDocument) : void{
 
         if(!assignment) throw new AssignmentNotFoundError("La asignacion no existe");
 

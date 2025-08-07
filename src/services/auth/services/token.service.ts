@@ -1,19 +1,10 @@
 // src/auth/services/token.service.ts
 import { sign, verify } from 'jsonwebtoken';
 import { inject, injectable } from 'tsyringe';
-import { resolve } from 'path';
-import * as dotenv from 'dotenv';
 import { JWT_PREAUTH_SECRET, JWT_SECRET_TOKEN } from '../../../core/const/jwt.const';
 import { JwtPayload, JwtPreAuthPayload } from '../../../core/types/jwt';
 import { JwtPayloadFactory } from '../../../core/factories/jwt.factory';
 import { JwtValidator } from '../../../core/utils/jwt.util';
-// Importar la factory
-
-// Cargar variables de entorno
-dotenv.config({ path: resolve(process.cwd(), ".env") });
-
-// Constantes reutilizables
-const SECRET = process.env.CONNECTION_STRING;
 
 @injectable()
 export class TokenService {
@@ -43,7 +34,7 @@ export class TokenService {
     // Usar la factory para crear el payload
     const payload = JwtPayloadFactory.createBasePreAuth(username, userId);
 
-    return sign(payload, process.env.JWT_PREAUTH_SECRET, {
+    return sign(payload, this.secretPreAuth, {
       algorithm: 'HS256'
     });
   }

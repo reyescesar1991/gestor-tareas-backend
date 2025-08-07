@@ -3,9 +3,9 @@ import { TaskService } from "../../services/task/Task.service";
 import { Request, Response, NextFunction } from "express";
 import { logger } from "../../core/logger/logger";
 import { TaskDto } from "../../core/zodValidators";
-import { sendSuccessResponse } from "../../core/helper/api/successResponse.helper";
+import { sendErrorResponse, sendSuccessResponse } from "../../core/helper/api/successResponse.helper";
 import { TaskUpdateDto } from "../../core/zodValidators/task.zod-validator";
-import { ObjectIdParam } from "../../core/zodValidators/idMongo.validator";
+import { ObjectIdParam, objectIdSchema } from "../../core/zodValidators/idMongo.validator";
 
 @injectable()
 export class TaskController {
@@ -37,10 +37,10 @@ export class TaskController {
 
             logger.info(`TaskController: tarea creado de forma exitosa.`);
             logger.debug({ message: 'TaskController: Preparando respuesta de éxito: ', data: result });
-            sendSuccessResponse(res, 200, {}, "tarea creado exitosamente");
-            
+            sendSuccessResponse(res, 200, {}, "Tarea creada exitosamente");
+
         } catch (error) {
-            
+
             // Log de error en el catch
             logger.error({ message: 'TaskController: Error durante la creacion del tarea', error });
             // Si el código es incorrecto, el servicio lanzará una excepción que será manejada aquí.
@@ -61,8 +61,11 @@ export class TaskController {
             const updateTask: TaskUpdateDto = req.body.dataUpdateTask;
             const idTask: ObjectIdParam = req.body.idTask;
 
+            console.log(req.body);
+            
+
             logger.info('TaskController: Datos enviados por el usuario', updateTask);
-            logger.info('TaskController: Datos enviados por el usuario', idTask);
+            // logger.info('TaskController: Datos enviados por el usuario', req.body.idTask);
 
             // 1. Llama al servicio de crear tarea
             logger.info('TaskController: Llamando al servicio TaskService.updateTask.');
@@ -71,11 +74,14 @@ export class TaskController {
             logger.info(`TaskController: tarea actualizada de forma exitosa.`);
             logger.debug({ message: 'TaskController: Preparando respuesta de éxito: ', data: result });
             sendSuccessResponse(res, 200, {}, "tarea actualizada exitosamente");
-            
+
         } catch (error) {
-            
+
             // Log de error en el catch
-            logger.error({ message: 'TaskController: Error durante la actualizacion de la tarea', error });
+            logger.error('TaskController: Error durante la actualizacion de la tarea', {
+        errorName: error.name,
+        errorMessage: error.message
+    });
             // Si el código es incorrecto, el servicio lanzará una excepción que será manejada aquí.
             next(error);
         }
@@ -91,16 +97,17 @@ export class TaskController {
 
             logger.info('TaskController: Inicio del proceso de obtencion de tareas'); // Inicio del método
 
+
             // 1. Llama al servicio de crear tarea
             logger.info('TaskController: Llamando al servicio TaskService.updateTask.');
             const result = await this.taskService.findTasks();
 
             logger.info(`TaskController: tareas encontradas de forma exitosa.`);
             logger.debug({ message: 'TaskController: Preparando respuesta de éxito: ', data: result });
-            sendSuccessResponse(res, 200, {}, "tareas encontradas exitosamente");
-            
+            sendSuccessResponse(res, 200, result, "tareas encontradas exitosamente");
+
         } catch (error) {
-            
+
             // Log de error en el catch
             logger.error({ message: 'TaskController: Error durante la busqueda de las tareas', error });
             // Si el código es incorrecto, el servicio lanzará una excepción que será manejada aquí.
@@ -129,13 +136,13 @@ export class TaskController {
             logger.info(`TaskController: tarea encontrada por ID de forma exitosa.`);
             logger.debug({ message: 'TaskController: Preparando respuesta de éxito: ', data: result });
             sendSuccessResponse(res, 200, {}, "tarea encontrada por ID exitosamente");
-            
+
         } catch (error) {
-            
-           // Log de error en el catch
+
+            // Log de error en el catch
             logger.error({ message: 'TaskController: Error durante la busqueda de la tarea', error });
             // Si el código es incorrecto, el servicio lanzará una excepción que será manejada aquí.
-            next(error); 
+            next(error);
         }
     }
 

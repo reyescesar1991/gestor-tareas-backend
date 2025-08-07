@@ -8,5 +8,6 @@ export interface IUserRepository{
     createUser(dataCreateUser : UserDto, session ?: ClientSession) : Promise<UserDocument | null>;
     findUser(idUser : ObjectIdParam, session ?: ClientSession) : Promise<UserDocument | null>;
     findUserByUsername(username : string, session ?: ClientSession) : Promise<UserDocument | null>;
+    getUsers(session ?: ClientSession) : Promise<UserDocument[] | null>;
     findUserByUniqueFields(phone : string, email : string, session ?: ClientSession): Promise<UserDocument | null>
 }

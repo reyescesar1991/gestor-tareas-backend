@@ -31,3 +31,11 @@ export class UserPasswordNotMisMatchError extends AppError {
         this.name = "UserPasswordNotMisMatchError";
     }
 }
+
+export class UsersNotFoundError extends AppError {
+    public readonly code: number = 1104; // Código HTTP para no autorizado
+    constructor(message: string = "No se encontraron usuarios") { // El código HTTP para "No encontrado" es 404
+        super(message, 404);
+        this.name = "UsersNotFoundError";
+    }
+}

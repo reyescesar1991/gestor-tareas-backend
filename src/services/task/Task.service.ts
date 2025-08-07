@@ -1,4 +1,4 @@
-import { inject } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { Transactional } from "../../core/utils/transactional-wrapper";
 import { ITaskRepository } from "./interfaces/ITask.repository";
 import { ClientSession } from "mongoose";
@@ -12,12 +12,13 @@ import { TaskUpdateDto } from "../../core/zodValidators/task.zod-validator";
 import { logger } from "../../core/logger/logger";
 import { log } from "console";
 
+@injectable()
 export class TaskService {
 
     constructor(
         @inject("ITaskRepository") private readonly taskRepository: ITaskRepository,
         @inject("TransactionManager") private readonly transactionManager: TransactionManager,
-        @inject("TaskValidator") private readonly taskValidator: TaskValidator,
+        @inject(TaskValidator) private readonly taskValidator: TaskValidator,
     ) { }
 
     @Transactional()
@@ -51,9 +52,9 @@ export class TaskService {
 
             const task = await this.taskRepository.findTaskById(idTask, session);
 
-            logger.debug("----Se ha encontrado la tarea para actualizar----", task);
-
-            TaskValidator.validateTaskExists(task);
+            logger.debug("----Se ha encontrado la tarea para actualizar----");
+            
+            this.taskValidator.validateTaskExists(task);
 
             const updateTask = await this.taskRepository.updateTask(idTask, dataUpdateTask, session);
 
@@ -101,7 +102,7 @@ export class TaskService {
 
             logger.debug("----Se ha encontrado la tarea----", task);
 
-            TaskValidator.validateTaskExists(task);
+            this.taskValidator.validateTaskExists(task);
 
             logger.info("----Operacion existosa: Se han encontrado la tarea con exito----");
 

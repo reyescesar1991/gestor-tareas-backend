@@ -9,8 +9,9 @@ import { TokenService } from "./services/token.service";
 export class AuthService {
 
     constructor(
-        @inject("UserService") private readonly userService: UserService,
+        @inject(UserService) private readonly userService: UserService,
         @inject(delay(() => TokenService)) private readonly tokenService: TokenService,
+        @inject(UserValidator) private readonly userValidator: UserValidator,
     ){}
 
     async loginUser(login : LoginAuthDto) : Promise<{ token: string }>{
@@ -19,7 +20,7 @@ export class AuthService {
 
             const user = await this.userService.findUserByUsername(login.username);
 
-            UserValidator.validatePasswordMatch(user.password, login.password);
+            this.userValidator.validatePasswordMatch(user.password, login.password);
 
             // Corregido: Usar el _id del usuario de la BD, no el username del login.
             const token = this.tokenService.generateToken(

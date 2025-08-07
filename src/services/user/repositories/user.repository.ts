@@ -12,6 +12,11 @@ export class UserRepositoryImpl implements IUserRepository{
         @inject("UserModel") private readonly userModel: Model<UserDocument>,
     ){}
 
+    async getUsers(session?: ClientSession): Promise<UserDocument[] | null> {
+        
+        return await this.userModel.find({}, null, {session}).select("name lastname username email phone");
+    }
+
     async findUserByUniqueFields(phone: string, email: string, session?: ClientSession): Promise<UserDocument | null> {
         
         const query : FilterQuery<UserDocument> = {
@@ -37,7 +42,7 @@ export class UserRepositoryImpl implements IUserRepository{
 
     async findUser(idUser: ObjectIdParam, session?: ClientSession): Promise<UserDocument | null> {
         
-        return await this.userModel.findById(idUser, null, {session});
+        return await this.userModel.findById(idUser, null, {session}).select("name lastname username email phone");
     }
     
 }
