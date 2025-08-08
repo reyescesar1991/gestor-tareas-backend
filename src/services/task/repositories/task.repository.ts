@@ -12,6 +12,12 @@ export class TaskRepositoryImpl implements ITaskRepository{
     constructor(
         @inject("TaskModel") private readonly TaskModel: Model<TaskDocument>,
     ){}
+    async deleteTask(idTask: ObjectIdParam, session?: ClientSession): Promise<TaskDocument | null> {
+        
+        const task = await this.TaskModel.findByIdAndDelete(idTask, {session});
+
+        return task;
+    }
 
     async updateTask(idTask : ObjectIdParam, dataUpdateTask: TaskUpdateDto, session?: ClientSession): Promise<TaskDocument | null> {
         

@@ -11,6 +11,15 @@ export class AssignmentRepositoryImpl implements IAssignmentRepository{
     constructor(
         @inject("AssignmentModel") private readonly AssignmentModel: Model<AssignmentDocument>,
     ){}
+
+    async findAssignments(): Promise<AssignmentDocument[] | null> {
+        return await this.AssignmentModel.find();
+    }
+
+    async findAssignmentByTaskId(idTask: ObjectIdParam, session?: ClientSession): Promise<AssignmentDocument | null> {
+        
+        return await this.AssignmentModel.findOne({task : idTask}, null, {session});
+    }
     
     async findAssignmentByUserId(idUser: ObjectIdParam, session?: ClientSession): Promise<AssignmentDocument | null> {
         

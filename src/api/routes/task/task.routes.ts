@@ -14,5 +14,6 @@ router.post('/create-task', validateCreateTaskData, taskController.createTask);
 router.post('/update-task', validateUpdateTaskData, taskController.updateTask);
 router.get('/get-tasks', authMiddleware, taskController.findTasks);
 router.post('/get-task-by-id', taskController.findTaskById);
+router.post('/delete-task', authMiddleware, taskController.deleteTask);
 
 export default router;

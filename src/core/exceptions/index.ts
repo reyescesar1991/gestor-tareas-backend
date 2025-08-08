@@ -14,3 +14,5 @@ export {TaskNotFoundError} from './task/task.exception';
 //assignment
 
 export {AssignmentNotFoundError} from './assignment/assignment.exception';
+export {AssignmentAlreadyAssignedError} from './assignment/assignment.exception';
+export {AssignmentsNotFoundError} from './assignment/assignment.exception';

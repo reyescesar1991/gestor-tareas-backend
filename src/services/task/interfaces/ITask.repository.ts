@@ -10,4 +10,5 @@ export interface ITaskRepository{
     updateTask(idTask : ObjectIdParam, dataUpdateTask : TaskUpdateDto, session ?: ClientSession) : Promise<TaskDocument | null>;
     findTasks() : Promise<TaskDocument[] | null>;
     findTaskById(idTask : ObjectIdParam, session ?: ClientSession) : Promise<TaskDocument | null>;
+    deleteTask(idTask : ObjectIdParam, session ?: ClientSession) : Promise<TaskDocument | null>;
 }

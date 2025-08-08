@@ -100,8 +100,6 @@ export class TaskService {
 
             const task = await this.taskRepository.findTaskById(idTask, session);
 
-            logger.debug("----Se ha encontrado la tarea----", task);
-
             this.taskValidator.validateTaskExists(task);
 
             logger.info("----Operacion existosa: Se han encontrado la tarea con exito----");
@@ -111,6 +109,34 @@ export class TaskService {
         } catch (error) {
 
             logger.error("Ha ocurrido un error en el service findTaskById: TaskService: ", error);
+            throw handleError(error);
+        }
+    }
+
+    @Transactional()
+    async deleteTask(idTask: ObjectIdParam, session?: ClientSession): Promise<TaskDocument | null>{
+
+        try {
+
+logger.debug("--Data para la eliminacion de una tarea: ", idTask);
+            logger.info("----Iniciando eliminacion de una tarea en el service: TaskService----");
+
+             const task = await this.taskRepository.findTaskById(idTask, session);
+
+            this.taskValidator.validateTaskExists(task);
+
+            logger.info("----Operacion existosa: Se han encontrado la tarea con exito----");
+
+            const deleteTask = await this.taskRepository.deleteTask(idTask, session);
+
+            logger.info("----Operacion existosa: Se ha eliminado la tarea con exito----");
+
+            return deleteTask;
+
+            
+        } catch (error) {
+            
+            logger.error("Ha ocurrido un error en el service deleteTask: TaskService: ", error);
             throw handleError(error);
         }
     }

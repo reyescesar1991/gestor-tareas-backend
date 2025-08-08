@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import { logger } from "../../core/logger/logger";
 import { AssignmentDto } from "../../core/zodValidators";
 import { sendSuccessResponse } from "../../core/helper/api/successResponse.helper";
-import { ObjectIdParam } from "../../core/zodValidators/idMongo.validator";
+import { ObjectIdParam, objectIdSchema } from "../../core/zodValidators/idMongo.validator";
 
 @injectable()
 export class AssignmentController {
@@ -23,7 +23,17 @@ export class AssignmentController {
 
             logger.info('AssignmentController: Inicio del proceso de creacion de asignacion'); // Inicio del método
 
-            const createAssignmentDto: AssignmentDto = req.body;
+            console.log(req.body);
+            
+
+            const createAssignmentDto: AssignmentDto = {
+
+                titleTask: req.body.titleTask,
+                assignUser: req.body.assignUser,
+                task:req.body.task,
+                assignedBy:req.body.assignedBy,
+                assignedTo:req.body.assignedTo,
+            };
 
             logger.info('AssignmentController: Datos enviados por el usuario', createAssignmentDto);
 
@@ -102,6 +112,33 @@ export class AssignmentController {
             
             // Log de error en el catch
             logger.error({ message: 'AssignmentController: Error durante la busqueda de la asignacion', error });
+            // Si el código es incorrecto, el servicio lanzará una excepción que será manejada aquí.
+            next(error);
+        }
+    }
+
+    public findAssignments = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+
+        try {
+
+            logger.info('AssignmentController: Inicio del proceso de busqueda de asignacion'); // Inicio del método
+
+            // 1. Llama al servicio de crear asignacion
+            logger.info('AssignmentController: Llamando al servicio AssignmentController.findAssignments.');
+            const result = await this.assignmentService.findAssignments();
+
+            logger.info(`AssignmentController: Asignacion encontrada de forma exitosa por id.`);
+            logger.debug({ message: 'AssignmentController: Preparando respuesta de éxito: ', data: result });
+            sendSuccessResponse(res, 200, result, "Asignaciones encontradas exitosamente por id");
+            
+        } catch (error) {
+            
+            // Log de error en el catch
+            logger.error({ message: 'AssignmentController: Error durante la busqueda de las asignaciones', error });
             // Si el código es incorrecto, el servicio lanzará una excepción que será manejada aquí.
             next(error);
         }

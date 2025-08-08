@@ -16,7 +16,7 @@ import { logger } from "../../core/logger/logger";
 export class AssignmentService{
 
     constructor(
-        @inject("AssignmentRepository") private readonly assignmentRepository: IAssignmentRepository,
+        @inject("IAssignmentRepository") private readonly assignmentRepository: IAssignmentRepository,
         @inject("TransactionManager") private readonly transactionManager: TransactionManager,
         @inject(AssignmentValidator) private readonly assignmentValidator: AssignmentValidator,
         @inject(delay(() => TaskService)) private readonly taskService: TaskService,
@@ -43,9 +43,13 @@ export class AssignmentService{
 
             logger.info("----Se ha validado que el usuario receptor exista----");
 
+            await this.assignmentValidator.validateAssignmentIsAlreadyAssigned(dataCreateAssignment.task, session);
+
+            logger.info("----Se ha validado que la tarea no se encuentre asignada----");
+
             const newAssignment =  await this.assignmentRepository.createAssignment(dataCreateAssignment, session);
 
-            logger.debug("----Se ha creado la asignacion----", newAssignment);
+            logger.debug("----Se ha creado la asignacion----");
             logger.info("----Operacion existosa: Se ha creado la asignacion con exito----")
 
             return newAssignment;
@@ -103,6 +107,28 @@ export class AssignmentService{
         } catch (error) {
             
             logger.error("Ha ocurrido un error en el service findAssignmentById: AssignmentService: ", error);
+            throw handleError(error);
+        }
+    }
+
+    async findAssignments(): Promise<AssignmentDocument[] | null>{
+
+        try {
+
+            logger.info("----Iniciando busqueda de asignaciones en el service: AssignmentService----");
+
+            const assignment = await this.assignmentRepository.findAssignments();
+
+            this.assignmentValidator.validateAssignmentsExists(assignment);
+
+            logger.info("----Operacion existosa: Se ha encontrado las asignaciones con exito----")
+
+            return assignment;
+
+            
+        } catch (error) {
+
+            logger.error("Ha ocurrido un error en el service findAssignments: AssignmentService: ", error);
             throw handleError(error);
         }
     }

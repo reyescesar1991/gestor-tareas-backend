@@ -3,9 +3,9 @@ import { TaskService } from "../../services/task/Task.service";
 import { Request, Response, NextFunction } from "express";
 import { logger } from "../../core/logger/logger";
 import { TaskDto } from "../../core/zodValidators";
-import { sendErrorResponse, sendSuccessResponse } from "../../core/helper/api/successResponse.helper";
+import { sendSuccessResponse } from "../../core/helper/api/successResponse.helper";
 import { TaskUpdateDto } from "../../core/zodValidators/task.zod-validator";
-import { ObjectIdParam, objectIdSchema } from "../../core/zodValidators/idMongo.validator";
+import { ObjectIdParam } from "../../core/zodValidators/idMongo.validator";
 
 @injectable()
 export class TaskController {
@@ -145,5 +145,39 @@ export class TaskController {
             next(error);
         }
     }
+
+    public deleteTask = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+
+        try {
+
+            logger.info('TaskController: Inicio del proceso de eliminacion de tarea por id'); // Inicio del método
+
+            const idTask: ObjectIdParam = req.body.idTask;
+
+            logger.info('TaskController: Datos enviados por el usuario', idTask);
+
+            // 1. Llama al servicio de crear tarea
+            logger.info('TaskController: Llamando al servicio TaskService.deleteTask.');
+            const result = await this.taskService.deleteTask(idTask);
+
+            logger.info(`TaskController: tarea eliminada por ID de forma exitosa.`);
+            logger.debug({ message: 'TaskController: Preparando respuesta de éxito: ', data: result });
+            sendSuccessResponse(res, 200, {}, "Tarea eliminada por ID exitosamente");
+
+            
+        } catch (error) {
+            
+            // Log de error en el catch
+            logger.error({ message: 'TaskController: Error durante la eliminacion de la tarea', error });
+            // Si el código es incorrecto, el servicio lanzará una excepción que será manejada aquí.
+            next(error);
+        }
+    }
+
+
 
 }
